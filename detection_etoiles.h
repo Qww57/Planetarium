@@ -1,5 +1,5 @@
 /**
- * \file etoiles_detection.cpp
+ * \file etoiles_detection.h
  * \brief programme de detection des boules
  * \author Quentin.T
  * \version 0.1
@@ -25,7 +25,6 @@ struct infosetoiles{
 
 void clearInfosetoiles(infosetoiles *etoiles);
 
-void starDetection_callback(cv::Mat img, starlist *etoiles);
 void starDetection_callback(cv::Mat img, infosetoiles *etoiles);
 
 // void etoileDetection_createtrackbar();
