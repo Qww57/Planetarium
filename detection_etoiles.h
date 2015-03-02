@@ -1,5 +1,5 @@
 /**
- * \file etoiles_detection.h
+ * \file detection_etoiles.h
  * \brief programme de detection des boules
  * \author Quentin.T
  * \version 0.1
@@ -11,7 +11,7 @@
 #ifndef DETECTION_ETOILES_H
 #define DETECTION_ETOILES_H
 
-#include "liste_etoile.h"
+#include "opencv2/highgui/highgui.hpp"
 
 using namespace cv;
 using namespace std;
