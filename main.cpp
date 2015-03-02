@@ -33,7 +33,7 @@ extern int threshold_value;
 int main( int argc, char** argv){
 
     Mat imgOriginal;
-    string path = "/home/quentin/Documents/ProjetS8/Etoiles/etoile3.jpg";
+    string path = "Etoiles/etoile3.jpg";
     imgOriginal = imread(path, CV_LOAD_IMAGE_COLOR);
 
     infosetoiles etoiles;
@@ -54,19 +54,19 @@ int main( int argc, char** argv){
         {
             case 49:
                     cout << "LOAD: 1 key is pressed by user, image 1 is loaded" << endl;
-                    path = "/home/quentin/Documents/ProjetS8/Etoiles/etoile1.jpg";
+                    path = "Etoiles/etoile1.jpg";
                     imgOriginal = imread(path, CV_LOAD_IMAGE_COLOR);
             break;
 
             case 50:
                     cout << "LOAD: 2 key is pressed by user, image 2 is loaded" << endl;
-                    path = "/home/quentin/Documents/ProjetS8/Etoiles/etoile2.jpg";
+                    path = "Etoiles/etoile2.jpg";
                     imgOriginal = imread(path, CV_LOAD_IMAGE_COLOR);
             break;
 
             case 51:
                     cout << "LOAD: 3 key is pressed by user, image 3 is loaded" << endl;
-                    path = "/home/quentin/Documents/ProjetS8/Etoiles/etoile3.jpg";
+                    path = "Etoiles/etoile3.jpg";
                     imgOriginal = imread(path, CV_LOAD_IMAGE_COLOR);
             break;
 
