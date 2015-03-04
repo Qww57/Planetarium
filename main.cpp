@@ -18,13 +18,17 @@
 
 #include "detection_etoiles.h"
 #include "writeText.h"
-
+#include "testRRDM.h"
 
 using namespace cv;
 using namespace std;
 
 #define KEY_UP 65362
 #define KEY_DOWN 65364
+
+
+/// Définir test à 1 pour générer des fichiers pour tester le code RRDM
+#define TEST 1
 
 extern int threshold_value;
 
@@ -40,6 +44,10 @@ int main( int argc, char** argv){
     bool continu = true;
     int previousnumber = 0;
 
+    Mat imgSmall = initialisation(&imgOriginal);
+    infosetoiles etoilesSmall;
+
+
     while (continu)
     {
         starDetection_callback(imgOriginal, &etoiles);
@@ -47,27 +55,31 @@ int main( int argc, char** argv){
         numberPrint(previousnumber, etoiles);
         previousnumber = etoiles.starPosition.size();
 
+
+        if (TEST == 1)
+            test(&imgOriginal, &etoiles, &imgSmall, &etoilesSmall);
+
         int key = waitKey(30);
         // if( key != -1) {cout << key << endl;}
 
         switch (key)
         {
             case 49:
-                    cout << "LOAD: 1 key is pressed by user, image 1 is loaded" << endl;
-                    path = "Etoiles/etoile1.jpg";
-                    imgOriginal = imread(path, CV_LOAD_IMAGE_COLOR);
+                cout << "LOAD: 1 key is pressed by user, image 1 is loaded" << endl;
+                path = "Etoiles/etoile1.jpg";
+                imgOriginal = imread(path, CV_LOAD_IMAGE_COLOR);
             break;
 
             case 50:
-                    cout << "LOAD: 2 key is pressed by user, image 2 is loaded" << endl;
-                    path = "Etoiles/etoile2.jpg";
-                    imgOriginal = imread(path, CV_LOAD_IMAGE_COLOR);
+                cout << "LOAD: 2 key is pressed by user, image 2 is loaded" << endl;
+                path = "Etoiles/etoile2.jpg";
+                imgOriginal = imread(path, CV_LOAD_IMAGE_COLOR);
             break;
 
             case 51:
-                    cout << "LOAD: 3 key is pressed by user, image 3 is loaded" << endl;
-                    path = "Etoiles/etoile3.jpg";
-                    imgOriginal = imread(path, CV_LOAD_IMAGE_COLOR);
+                cout << "LOAD: 3 key is pressed by user, image 3 is loaded" << endl;
+                path = "Etoiles/etoile3.jpg";
+                imgOriginal = imread(path, CV_LOAD_IMAGE_COLOR);
             break;
 
             case 27:
@@ -84,7 +96,12 @@ int main( int argc, char** argv){
 
             case 's':
                 cout << "SAVE: s is pressed by user, saving the data" << endl;
-                writeText(&imgOriginal, etoiles);
+                if (TEST == 1){
+                    TestwriteText(&imgOriginal, etoiles, &imgSmall, etoilesSmall);
+                }
+                else {
+                    writeText(&imgOriginal, etoiles);
+                }
             break;
 
             case 'h':
@@ -102,6 +119,16 @@ int main( int argc, char** argv){
                 if (threshold_value > 0)
                     threshold_value = threshold_value -1;
                 cout << "Down: Key down is pressed by user, threshold value - 1 : " << threshold_value << " / 255 " << endl;
+            break;
+
+            case 'n':
+                if (TEST == 1)
+                {
+                    cout << "NEW: n is pressed by user, new cut picture :";
+                    imgSmall.release();
+                    imgSmall = initialisation(&imgOriginal);
+                    cout << "New dimensions : " << imgSmall.cols << " " << imgSmall.rows << endl;
+                }
             break;
         }
     }
