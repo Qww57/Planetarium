@@ -52,6 +52,7 @@ void test(Mat *imgOriginal, infosetoiles *etoiles, Mat *imgSmall, infosetoiles *
 
 void TestwriteText(Mat *image, infosetoiles etoiles, Mat *imgSmall, infosetoiles etoiles2){
     ofstream fs("../Textes/stars-ref.txt");
+
     if(!fs)
     {
         std::cerr<<"Cannot open the output file."<<std::endl;
@@ -72,8 +73,10 @@ void TestwriteText(Mat *image, infosetoiles etoiles, Mat *imgSmall, infosetoiles
     {
         std::cerr<<"Cannot open the output file."<<std::endl;
     }
+
     fs2 << "0 0 " << imgSmall->rows << " " << imgSmall->cols << '\n';
     fs2 << etoiles2.starPosition.size()  << '\n' ;
+
     for (int i = 0; i < etoiles2.starPosition.size(); i++)
     {
         fs2 << etoiles2.starPosition[i].x << " "

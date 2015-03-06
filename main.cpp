@@ -29,6 +29,7 @@ using namespace std;
 /// Définir test à 1 pour générer des fichiers pour tester le code RRDM
 #define TEST 0
 
+
 extern int threshold_value;
 
 /// MAIN
@@ -36,6 +37,7 @@ extern int threshold_value;
 int main( int argc, char** argv){
 
     Mat imgOriginal;
+
     string path = "../Etoiles/etoile3.jpg";
     imgOriginal = imread(path, CV_LOAD_IMAGE_COLOR);
 
