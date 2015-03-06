@@ -27,7 +27,7 @@ using namespace std;
 
 
 /// Définir test à 1 pour générer des fichiers pour tester le code RRDM
-#define TEST 0
+#define TEST 1
 
 
 extern int threshold_value;
