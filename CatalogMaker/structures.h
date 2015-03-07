@@ -28,8 +28,8 @@ struct StarData { // permet d'enregistrer les données pertinentes d'une étoile
     double spDEC;
 
     string BmagR;
-    string VmagR; //visual magnitude number
-    //string VmagRpuissance;//visual magnitude letter
+    double VmagR; //visual magnitude number
+    char VmagRpuissance;//visual magnitude letter
     string RmagR;
 
     string Jmag;

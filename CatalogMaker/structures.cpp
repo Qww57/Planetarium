@@ -10,10 +10,11 @@ std::vector<StarData> readNomadFile(string path)
 {
     string line;
     vector<StarData> result;
-    cout <<path<<endl<<endl;
+
     ifstream myfile(path.c_str());
     if (myfile.is_open())
     {
+       cout <<"[SUCCES]  open : " << path<<endl;
        while(getline (myfile,line))
        {
 
@@ -67,7 +68,7 @@ std::vector<StarData> readNomadFile(string path)
 
                //RA
                word = words1.at(0);
-               std::replace( word.begin(), word.end(), '.', ',');
+               //std::replace( word.begin(), word.end(), '.', ',');
                pos = (word.find("-"));
                tmp.RA = atof(word.substr(0,pos).c_str());
                word.erase(0, pos + 1);
@@ -146,7 +147,13 @@ std::vector<StarData> readNomadFile(string path)
                  //std::cout <<" test1 : "<<words1.size()-1<<" : ~"<< word<<"~ " << std::endl;
 
                  tmp.BmagR = words1.at(0);
-                 tmp.VmagR = words1.at(1);
+
+                 //VmagR, VmagRpuissance
+                 string vmagr = words1.at(1).substr(0, words1.at(1).length()-2);
+                 tmp.VmagR = atof(vmagr.c_str());
+                 tmp.VmagRpuissance = words1.at(1)[words1.at(1).length()-1];
+
+
                  tmp.RmagR = words1.at(2);
 
                  //Jmag, Hmag, Kmag
@@ -196,7 +203,7 @@ std::vector<StarData> readNomadFile(string path)
 
     else
     {
-        cout << "Unable to open file";
+        cout <<"[FAIL]  open : " << path<<endl;
     }
 
     return result;
