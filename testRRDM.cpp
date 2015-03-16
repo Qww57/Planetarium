@@ -26,11 +26,15 @@ Mat initialisation(Mat *imgOriginale){
     {
     	int x = rand()%(imgOriginale-> cols/2);
     	int y = rand()%(imgOriginale-> rows/2);
-    
-    	int largeur = rand()%(imgOriginale->cols/2);
-   	int longueur = rand()%(imgOriginale->rows/2);
+    	
+	srand(time(NULL));
 
-    	return Mat(*imgOriginale, Rect( x, y, largeur, longueur));
+    	//int largeur = rand()%(imgOriginale->cols/2);
+   	//int longueur = rand()%(imgOriginale->rows/2);
+	int largeur = 500;
+	int longueur = 500;	
+
+    	return Mat(*imgOriginale, Rect( x + 5, y + 5, largeur, longueur));
     }
     else
     {
@@ -46,8 +50,8 @@ void test(Mat *imgOriginal, infosetoiles *etoiles, Mat *imgSmall, infosetoiles *
 
     //namedWindow( "cut");
     //imshow("cut", *imgSmall);
-    //namedWindow( "original");
-    //imshow("original", *imgOriginal);
+    namedWindow( "original");
+    imshow("original", *imgOriginal);
 }
 
 void TestwriteText(Mat *image, infosetoiles etoiles, Mat *imgSmall, infosetoiles etoiles2){
@@ -57,7 +61,7 @@ void TestwriteText(Mat *image, infosetoiles etoiles, Mat *imgSmall, infosetoiles
     {
         std::cerr<<"Cannot open the output file."<<std::endl;
     }
-    fs << "0 0 " << image->rows << " " << image->cols << '\n';
+    fs << "0 0 " << image->cols << " " << image->rows << '\n';
     fs << etoiles.starPosition.size()  << '\n' ;
     for (int i = 0; i < etoiles.starPosition.size(); i++)
     {
@@ -74,7 +78,7 @@ void TestwriteText(Mat *image, infosetoiles etoiles, Mat *imgSmall, infosetoiles
         std::cerr<<"Cannot open the output file."<<std::endl;
     }
 
-    fs2 << "0 0 " << imgSmall->rows << " " << imgSmall->cols << '\n';
+    fs2 << "0 0 " << imgSmall->cols << " " << imgSmall->rows << '\n';
     fs2 << etoiles2.starPosition.size()  << '\n' ;
 
     for (int i = 0; i < etoiles2.starPosition.size(); i++)
