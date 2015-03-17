@@ -1,3 +1,13 @@
+/**
+ * \file MainWindow.h
+ * \brief fonction principale : permet de lire un ensemble de fichier NOMAD pour construire notre propre catalogue
+ * \author Valentin Liévin
+ * \version 0.1
+ * \date 6 mars 2015
+ *
+ *
+ */
+
 #include <QApplication>
 #include <QPushButton>
 #include <QLabel>
@@ -20,9 +30,9 @@ int main(int argc, char *argv[])
     QLabel P("Hello World", &w);
     w.show();
 */
-    vector<StarData> result;
-    vector<StarData>tmp;
-    result = readNomadFile("0250_nomad.txt");
+    vector<StarData*> result;
+    vector<StarData*> tmp;
+    //result = readNomadFile("0250_nomad.txt");
 
     vector<string> filesNames;
 
@@ -30,7 +40,8 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
         QDir dir("D:\\code\\Planetarium\\CatalogMaker\\nomad");
         dir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
-        dir.setSorting(QDir::Size | QDir::Reversed);
+        //dir.setSorting(QDir::Size | QDir::Reversed);
+        dir.setSorting(QDir::Size );
 
         QFileInfoList list = dir.entryInfoList();
         std::cout << "     Bytes Filename" << std::endl<<endl;
@@ -43,6 +54,7 @@ int main(int argc, char *argv[])
         }
     ///end
 
+    int m = 0;
 
     ///read nomad files
     for (int i = 0; i<filesNames.size(); i ++)
@@ -52,13 +64,56 @@ int main(int argc, char *argv[])
         result.reserve(tmp.size() + result.size());
         result.insert(result.end(), tmp.begin(), tmp.end());
         tmp.clear();
+
+        // test to know if we write in the file
+         if (i==600 || i==1200 || i == filesNames.size()-1 )
+         {
+             ///writing in file
+             QFile file;
+                cout << "start writing : cat" << m<<endl<< "--> result size : " << result.size() << endl;
+             if(m==0)
+                file.setFileName("D:\\code\\Planetarium\\CatalogMaker\\projectCatalog\\cat0.txt");
+             else if (m==1)
+                file.setFileName("D:\\code\\Planetarium\\CatalogMaker\\projectCatalog\\cat1.txt");
+             else if(m==2)
+                file.setFileName("D:\\code\\Planetarium\\CatalogMaker\\projectCatalog\\cat2.txt");
+
+             file.open(QIODevice::WriteOnly | QIODevice::Text);
+             QTextStream cat(&file);
+             for (int j = 0; j< result.size(); j ++)
+             {
+                 //string tmp = result[i].ID ;
+                 cat << result.at(j)->ID.c_str() << " " << result.at(j)->RA << " " << result.at(j)->DEC << endl;
+                 //cat<<tmp.c_str() << i <<endl;
+
+                 ///free memory
+                 delete result.at(j);
+             }
+             // optional, as QFile destructor will already do it:
+             file.close();
+             cout << "end writing : " << m <<endl;
+             result.clear();
+             m++;
+         }
     }
 
+    /*///writing last file
+             QFile file("D:\\code\\Planetarium\\CatalogMaker\\projectCatalog\\cat2.txt");
+                file.open(QIODevice::WriteOnly | QIODevice::Text);
+                QTextStream cat(&file);
+                for (int j = 0; j< result.size(); j ++)
+                {
+                    //string tmp = result[i].ID ;
+                    cat << result.at(j).ID.c_str() << " " << result.at(j).RA << " " << result.at(j).DEC << endl;
+                    //cat<<tmp.c_str() << i <<endl;
+                }
+                // optional, as QFile destructor will already do it:
+                file.close();
+    */
 
-
-
+    /*
     ///  DEBUG
-    cout << "#### result size : "<< result.size()<< endl<<endl;
+    cout << endl<<"#### result size : "<< result.size()<< endl<<endl;
     cout << "n°130 : "<<endl
          << "ID : " << result[129].ID << endl;
          //<< " BCTYM : " << result[129].BCTYM << endl<<
@@ -72,19 +127,9 @@ int main(int argc, char *argv[])
          //<< "is Recommended :" << result[129].Recommended
          cout<<endl;
     /// End DEBUG
+    /// */
 
-    ///writing our file
-         QFile file("D:\\code\\Planetarium\\CatalogMaker\\projectCatalog\\cat.txt");
-            file.open(QIODevice::WriteOnly | QIODevice::Text);
-            QTextStream cat(&file);
-            for (int i = 0; i< result.size(); i ++)
-            {
-                //string tmp = result[i].ID ;
-                cat << result.at(i).ID.c_str() << "|" << result.at(i).RA << "|" << result.at(i).DEC << endl;
-                //cat<<tmp.c_str() << i <<endl;
-            }
-            // optional, as QFile destructor will already do it:
-            file.close();
+
 
 
     //return a.exec();

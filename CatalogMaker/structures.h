@@ -1,3 +1,13 @@
+/**
+ * \file structure.h
+ * \brief défintion de la structure de données starData
+ * \author Valentin Liévin
+ * \version 0.1
+ * \date 6 mars 2015
+ *
+ *
+ */
+
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
 
@@ -9,12 +19,13 @@ using namespace std;
 
 struct StarData { // permet d'enregistrer les données pertinentes d'une étoiles
     string ID;
-    string BCTYM;// ???
+    //string BCTYM;// ???
     double RA;//the Right Ascension of the object in hours or degrees. The epoch and equinox are those given in the file header.
     //The default is equinox and epoch J2000.0.
     double DEC; //the Declination of the object in degrees.
     //The epoch and equinox are those given in the file header. The default is equinox and epoch J2000.0.
 
+/* pas utile pour le moment
     char r; // ???
     double sRA;  //the error in the RA position. This is given in integer milli-arcseconds. The error is given at the RA Mean Epoch.
     double sDEC;
@@ -35,7 +46,7 @@ struct StarData { // permet d'enregistrer les données pertinentes d'une étoile
     string Jmag;
     string Hmag;
     string Kmag;
-
+*/
     bool Recommended;
 
 
@@ -46,7 +57,7 @@ struct StarData { // permet d'enregistrer les données pertinentes d'une étoile
 
 };
 
-std::vector<StarData> readNomadFile(string path);
+std::vector<StarData *> readNomadFile(string path);
 
 std::string GetDataUntilSymbol(string& source, char symbol);
 
