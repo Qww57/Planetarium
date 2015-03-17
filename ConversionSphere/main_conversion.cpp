@@ -82,13 +82,13 @@ using namespace GeographicLib;
 
 /// Définitions des fonctions de conversion
 
-void changementRepere(float &lat, float &long, float alpha, float delta) //Passage des coordonnées célestes aux coordonnées géographiques
+void changementRepere (float &lat, float &longitude, float alpha, float delta) //Passage des coordonnées célestes aux coordonnées géographiques
 {
 	float SinLat, CosLongXCosLat, SinLongXCosLat;
 	
 	//Formules de changement de repère 
 	SinLat = cos(enRadians(EPSILON))*sin(delta)-sin(EPSILON)*sin(alpha)*cos(delta);
-	CosLongXCosLat = cos(aplha)*cos(delta);
+    CosLongXCosLat = cos(alpha)*cos(delta);
 	SinLongXCosLat = sin(EPSILON)*sin(delta)+cos(EPSILON)*sin(alpha)*cos(delta);
 	
 	//Calcul de lat et long
@@ -96,12 +96,12 @@ void changementRepere(float &lat, float &long, float alpha, float delta) //Passa
 	
 	if(CosLongXCosLat > 0) //Equivalent à cosLong > 0 
 	{
-		long = asin(SinLongXCosLat/cos(lat));
+		longitude = asin(SinLongXCosLat/cos(lat));
 	}
 	
 	else 
 	{
-		long = acos(CosLongXCosLat/cos(lat));
+        longitude = acos(CosLongXCosLat/cos(lat));
 	}
 	
 }

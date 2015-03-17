@@ -26,7 +26,7 @@ struct positionPlan{
 
 float enRadians (float angle);
 
-void changementRepere(float &lat, float &long, float alpha, float delta);
+void changementRepere(float &lat, float &longitude, float alpha, float delta);
 
 positionTerrestre reverse(positionPlan in);
 
