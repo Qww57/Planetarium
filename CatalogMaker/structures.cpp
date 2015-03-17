@@ -170,6 +170,9 @@ std::vector<StarData*> readNomadFile(string path)
                  string vmagr = words1.at(1).substr(0, words1.at(1).length()-2);
                  //tmp.VmagR = atof(vmagr.c_str());
                  //tmp.VmagRpuissance = words1.at(1)[words1.at(1).length()-1];
+                 float V = atof(vmagr.c_str());
+                 char P = words1.at(1)[words1.at(1).length()-1];
+
 
 
                  //tmp.RmagR = words1.at(2);
@@ -201,7 +204,7 @@ std::vector<StarData*> readNomadFile(string path)
                   //tmp.Kmag = words1.at(2);
 
                   //recommended
-
+/*
                   if (words.at(7).c_str()[0] == ' ')
                   {
                       tmp->Recommended = false;
@@ -210,8 +213,11 @@ std::vector<StarData*> readNomadFile(string path)
                   {
                       tmp->Recommended = true;
                   }
+*/
                   //cout << "recommended : " <<tmp.Recommended << endl;
-                  result.push_back(tmp);
+                 if ( V > 17.0) //simple filter using the visual magnitude
+                    result.push_back(tmp);
+
             }
        }
        myfile.close();

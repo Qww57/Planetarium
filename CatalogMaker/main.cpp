@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
         QDir dir("D:\\code\\Planetarium\\CatalogMaker\\nomad");
         dir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
         //dir.setSorting(QDir::Size | QDir::Reversed);
+        //on parcourt les fichiers par taille décroissante
         dir.setSorting(QDir::Size );
 
         QFileInfoList list = dir.entryInfoList();
@@ -91,7 +92,7 @@ int main(int argc, char *argv[])
              }
              // optional, as QFile destructor will already do it:
              file.close();
-             cout << "end writing : " << m <<endl;
+             cout << "end writing : cat" << m <<endl;
              result.clear();
              m++;
          }
