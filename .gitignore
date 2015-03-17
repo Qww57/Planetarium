@@ -7,4 +7,7 @@ CatalogMaker\projectCatalog
 
 filestoreplace
 CatalogMaker/nomad/0000_nomad.txt
-*.txt
+DetectionPhoto/build
+ConversionSphere/build
+RRDM
+RRDM_Original
