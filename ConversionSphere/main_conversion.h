@@ -22,7 +22,11 @@ struct positionPlan{
     double y;
 };
 
-/// Définition des fonctions de conversion
+/// Définition des fonctions de 
+
+float enRadians (float angle);
+
+void changementRepere(float &lat, float &long, float alpha, float delta);
 
 positionTerrestre reverse(positionPlan in);
 

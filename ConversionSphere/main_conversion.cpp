@@ -15,9 +15,14 @@
 #include <iomanip>
 #include <fstream>
 #include <string>
+#include <cmath>
 #include "GeographicLib/TransverseMercator.hpp"
 
 #include "main_conversion.h"
+
+#define PI 3.14159265
+#define EPSILON 23.439281
+
 
 using namespace std;
 using namespace GeographicLib;
@@ -77,6 +82,20 @@ using namespace GeographicLib;
 
 /// Définitions des fonctions de conversion
 
+void changementRepere(float &lat, float &long, float alpha, float delta)
+{
+	float SinLat, CosLongXCosLat, SinLongXCosLat;
+	
+	SinLat = cos(enRadians(EPSILON))*sin(delta)-sin(EPSILON)*sin(alpha)*cos(delta);
+	CosLongXCosLat = cos(aplha)*cos(delta);
+	SinLongXCosLat = sin(EPSILON)*sin(delta)+cos(EPSILON)*sin(alpha)*cos(delta);
+	
+}
+
+float enRadians (float angle)
+{
+	return (angle*PI)/180;
+}
 
 positionPlan forward(positionTerrestre in){
     positionPlan out;
@@ -151,7 +170,6 @@ positionTerrestre reverse(positionPlan in){
 
 
 /// MAIN
-
 
 int main(){
 
