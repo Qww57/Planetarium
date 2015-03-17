@@ -12,8 +12,9 @@
 
 #include <iostream>
 #include <exception>
-#include <string>
 #include <iomanip>
+#include <fstream>
+#include <string>
 #include "GeographicLib/TransverseMercator.hpp"
 
 #include "main_conversion.h"
@@ -159,7 +160,54 @@ int main(){
     Nantes.latitude = 47.21725;
     Nantes.longitude = -1.53360;
 
-    positionPlan nantes = forward(Nantes);
+    ofstream sortie("../Rendu/CatalogueProjete.txt");
+    if(!sortie)
+    {
+        std::cerr<<"Cannot open the output file."<<std::endl;
+	return -1;
+    }
+
+    ifstream catalogue("src/Cat.txt");
+    if (!catalogue)
+    {
+        std:cerr<<"Cannot open the input file."<<std::endl; 
+	return -1;
+    }
+    else 
+    {
+        string identifiant;
+	
+	positionTerrestre in;
+        positionPlan out;
+
+        
+	
+        int compteur = 0;
+        string mot;
+
+        while (catalogue >> mot) 
+        {
+             compteur =+1;
+             if (compteur %3 == 0)
+	     {
+                identifiant = mot;
+                sortie << identifiant << " ";
+             }
+             if (compteur %3 == 1)
+             {
+                in.latitude = atoi(mot.c_str());                	
+             }
+             if (compteur %3 == 2)
+             {
+                in.longitude = atoi(mot.c_str());
+                out = forward(in);
+                sortie << out.x << " " << out.y<< endl;
+             }
+
+        } // while
+    } // else
+
+    // positionPlan nantes = forward(Nantes);
 
     return 0;
 }
