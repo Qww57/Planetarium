@@ -1,4 +1,6 @@
 #include "GeographicLib/TransverseMercator.hpp"
+#include <fstream>
+#include <string>
 
 using namespace std;
 using namespace GeographicLib;
@@ -24,12 +26,14 @@ struct positionPlan{
 
 /// Définition des fonctions de 
 
-float enRadians (float angle);
+double enRadians (double angle);
 
-void changementRepere(float &lat, float &longitude, float alpha, float delta);
+void changementRepere (double &lat, double &longitude, double alpha, double delta);
 
-positionTerrestre reverse(positionPlan in);
+positionTerrestre reverse(positionPlan in, double meridian);
+
+void projection(ifstream &catalogue, ofstream &fichier);
 
 positionPlan forward(positionTerrestre in);
 
-double decoupage (positionTerrestre in);
+double meridian(int zone);
