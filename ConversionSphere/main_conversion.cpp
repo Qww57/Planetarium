@@ -37,24 +37,31 @@ void changementRepere (double &lat, double &longitude, double alpha, double delt
 {
     double SinLat, CosLongXCosLat, SinLongXCosLat;
 	
+	alpha = enRadians(alpha);
+	delta = enRadians(delta);
+	
 	//Formules de changement de repère 
 	SinLat = cos(enRadians(EPSILON))*sin(delta)-sin(EPSILON)*sin(alpha)*cos(delta);
     CosLongXCosLat = cos(alpha)*cos(delta);
 	SinLongXCosLat = sin(EPSILON)*sin(delta)+cos(EPSILON)*sin(alpha)*cos(delta);
 	
 	//Calcul de lat et long
-	lat = asin(SinLat); //Parce que lat est compris entre 0 et PI/2
+	lat = asin(SinLat); //Parce que lat est compris entre -PI/2 et PI/2
 	
 	if(CosLongXCosLat > 0) //Equivalent à cosLong > 0 
 	{
 		longitude = asin(SinLongXCosLat/cos(lat));
 	}
 	
-	else 
+	if(CosLongXCosLat <= 0 && SinLongXCosLat > 0)
 	{
-        longitude = acos(CosLongXCosLat/cos(lat));
+		longitude = acos(CosLongXCosLat/cos(lat));
 	}
 	
+	if(CosLongXCosLat <= 0 && SinLongXCosLat <= 0)
+	{
+		longitude = PI - asin(-SinLongXCosLat/cos(lat));
+	}
 }
 
 double enRadians (double angle)
