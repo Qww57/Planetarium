@@ -5,8 +5,6 @@ project ( Projection )
 set(SRCEXT "cpp")
 
 # required packages
-#find_package ( OpenCV REQUIRED )
-
 find_package (GeographicLib REQUIRED)
 
 macro( config_project PROJNAME LIBNAME )
@@ -16,8 +14,7 @@ endmacro()
 
 add_definitions (${GeographicLib_DEFINITIONS})
 
-include_directories (${GeographicLib_INCLUDE_DIRS}) # PB
-
+include_directories (${GeographicLib_INCLUDE_DIRS}) 
 
 add_executable (Projection main_conversion.cpp)
 

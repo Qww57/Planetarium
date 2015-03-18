@@ -15,6 +15,7 @@
 #include <iomanip>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <cmath>
 #include "GeographicLib/TransverseMercator.hpp"
 
@@ -67,7 +68,6 @@ positionPlan forward(positionTerrestre in, double meridian){
     try {
         TransverseMercator proj(Constants::WGS84_a(), Constants::WGS84_f(), Constants::UTM_k0());
         // Alternatively: const TransverseMercator& proj = TransverseMercator::UTM;
-
         //double lon0 = -75; // Central meridian for UTM zone 18
         {
             // Sample forward calculation
@@ -79,7 +79,6 @@ positionPlan forward(positionTerrestre in, double meridian){
             out.x = x;
             out.y = y;
         }
-
     }
     catch (const exception& e)
     {
@@ -116,7 +115,8 @@ positionTerrestre reverse(positionPlan in){
 /// Decoupage de la map en différents méridiens de développement
 
 int long2UTM (int Long){
-    int ZoneUTM = (floor((Long + 180)/6) % 60) + 1;
+    int temp = floor((Long + 180)/6);
+    int ZoneUTM = temp%60+ 1;
     return ZoneUTM;
 }
 
@@ -135,54 +135,6 @@ double meridian(int zone){
 
 
 /// MAIN
-
-void projection(ifstream &catalogue, ofstream &sortie){
-
-    positionTerrestre sol;
-    positionCelestre ciel;
-    positionPlan plan;
-
-    int compteur = 0;
-    string mot;
-
-    while (catalogue >> mot)
-    {
-         compteur =+1;
-         if (compteur %3 == 0)
-         {
-            //sortie << mot << " ";
-         }
-         if (compteur %3 == 1)
-         {
-            ciel.rightascension = atoi(mot.c_str());
-         }
-         if (compteur %3 == 2)
-         {
-            ciel.declination = atoi(mot.c_str());
-
-            changementRepere(*sol->latitude, *sol->longitude, ciel.rightascension, ciel.declination);
-
-            int Zone = long2UTM(sol.longitude);
-            double _meridian = meridian(Zone);
-
-            plan = forward(sol, _meridian);
-
-            /*
-            ostringstream X;
-            ostringstream Y;
-            X << &plan.x;
-            Y << &plan.y;
-            string _X = X.str();
-            string _Y = Y.str();
-            sortie << _X << " " << _Y << '\n';
-            */
-        }
-
-    } // while
-}
-
-
-
 
 
 
@@ -203,8 +155,50 @@ int main(){
     }
     else 
     {
-        projection(*catalogue, *sortie);
-    } //
+        positionTerrestre sol;
+        positionCelestre ciel;
+        positionPlan plan;
+
+        int compteur = 0;
+        string mot;
+
+        while (!catalogue.eof())
+        {
+            mot = catalogue.get();
+            compteur =+1;
+             if (compteur %3 == 0)
+             {
+                //sortie << mot << " ";
+             }
+             if (compteur %3 == 1)
+             {
+                ciel.rightascension = atoi(mot.c_str());
+             }
+             if (compteur %3 == 2)
+             {
+                ciel.declination = atoi(mot.c_str());
+
+                changementRepere(sol.latitude, sol.longitude, ciel.rightascension, ciel.declination);
+
+                int Zone = long2UTM(sol.longitude);
+                double _meridian = meridian(Zone);
+
+                plan = forward(sol, _meridian);
+
+                stringstream ssX;
+                ssX << plan.x;
+                string sX = ssX.str();
+
+                stringstream ssY;
+                ssY << plan.y;
+                string sY = ssY.str();
+
+                sortie << sX << " " << sY << '\n';
+
+            }
+
+        }
+    }
 
     return 0;
 }
