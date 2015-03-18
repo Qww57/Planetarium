@@ -96,11 +96,11 @@ positionTerrestre reverse(positionPlan in){
         double lon0 = -75; // Central meridian for UTM zone 30 T
         {
             // Sample reverse calculation
-            cout << "Reverse : ";
+            //cout << "Reverse : ";
             double x = 25e3, y = 4461e3;
             double lat, lon;
             proj.Reverse(lon0, in.x, in.y, lat, lon);
-            cout << lat << " " << lon << "\n";
+            //cout << lat << " " << lon << "\n";
             out.latitude = lat;
             out.longitude = lon;
         }
@@ -114,8 +114,8 @@ positionTerrestre reverse(positionPlan in){
 
 /// Decoupage de la map en différents méridiens de développement
 
-int long2UTM (int Long){
-    int temp = floor((Long + 180)/6);
+int long2UTM (int Long){        
+    int temp = floor(((Long%360) + 180)/6);
     int ZoneUTM = temp%60+ 1;
     return ZoneUTM;
 }
@@ -128,17 +128,27 @@ double meridian(int zone){
     /// zone 0 : meridian : -180
 
     double longitude;
-    longitude = (zone-30)*6;
-
+    longitude = ((zone-30)*6) %360;
     return longitude;
 }
 
 
 /// MAIN
 
+// RA = longitude .. DEC = latitude
 
+// Unités de Valentin ?
+// Unités de la conversion changement de repère ?
+// Unités de Forward ?
 
 int main(){
+
+    ifstream catalogue("../src/cat.txt");
+    if (!catalogue)
+    {
+        std:cerr<<"Cannot open the input file."<<std::endl;
+    return -1;
+    }
 
     ofstream sortie("../Rendu/CatalogueProjete.txt");
     if(!sortie)
@@ -147,58 +157,59 @@ int main(){
 	return -1;
     }
 
-    ifstream catalogue("src/Cat.txt");
-    if (!catalogue)
-    {
-        std:cerr<<"Cannot open the input file."<<std::endl; 
-    return -1;
-    }
-    else 
-    {
-        positionTerrestre sol;
-        positionCelestre ciel;
-        positionPlan plan;
+    positionTerrestre sol;
+    positionCelestre ciel;
+    positionPlan plan;
 
-        int compteur = 0;
-        string mot;
+    int compteur = 0;
+    string mot;
 
-        while (!catalogue.eof())
-        {
-            mot = catalogue.get();
-            compteur =+1;
-             if (compteur %3 == 0)
-             {
-                //sortie << mot << " ";
-             }
-             if (compteur %3 == 1)
-             {
-                ciel.rightascension = atoi(mot.c_str());
-             }
-             if (compteur %3 == 2)
-             {
-                ciel.declination = atoi(mot.c_str());
+    //for (int i=0 ; i <3; i++){
+    while (!catalogue.eof()){
+        catalogue >> mot;
+        // cout << mot << endl;
 
-                changementRepere(sol.latitude, sol.longitude, ciel.rightascension, ciel.declination);
+        compteur = compteur + 1;
 
-                int Zone = long2UTM(sol.longitude);
-                double _meridian = meridian(Zone);
+         if (compteur %3 == 1)
+         {
+            sortie << mot << " ";
+         }
+         if (compteur %3 == 2)
+         {
+            ciel.rightascension = atoi(mot.c_str());
+         }
+         if (compteur %3 == 0)
+         {
+            // On récupère la valeur
+            ciel.declination = atoi(mot.c_str());
 
-                plan = forward(sol, _meridian);
+            // On passe au repère terrestre
+            changementRepere(sol.latitude, sol.longitude, ciel.rightascension, ciel.declination);
+            cout << "Terre : " << sol.latitude << " " << sol.longitude << endl;
 
-                stringstream ssX;
-                ssX << plan.x;
-                string sX = ssX.str();
+            // On calcule le meridien de projection
+            int Zone = long2UTM(sol.longitude);
+            double _meridian = meridian(Zone);
+            cout << "Zone : " << Zone << " Longitude : " << _meridian << endl;
 
-                stringstream ssY;
-                ssY << plan.y;
-                string sY = ssY.str();
+            // On projete sur le sol
+            plan = forward(sol, _meridian);
+            cout << endl;
 
-                sortie << sX << " " << sY << '\n';
 
-            }
+            // On écrit dans le fichier texte
+            stringstream ssX, ssY;
+            ssX << plan.x;
+            string sX = ssX.str();
+            ssY << plan.y;
+            string sY = ssY.str();
+            sortie << sX << " " << sY << '\n';
 
         }
     }
+    //}
+    sortie.close();
 
     return 0;
 }
