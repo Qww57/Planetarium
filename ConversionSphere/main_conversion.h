@@ -28,11 +28,11 @@ struct positionPlan{
 
 double enRadians (double angle);
 
-void changementRepere (double &lat, double &longitude, double alpha, double delta);
+double enDegres(double angle);
+
+void changementRepere (double &lat, double &longitude, double alpha, double delta, int &nbErreur);
 
 positionTerrestre reverse(positionPlan in, double meridian);
-
-void projection(ifstream &catalogue, ofstream &fichier);
 
 positionPlan forward(positionTerrestre in);
 

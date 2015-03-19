@@ -28,45 +28,74 @@ using namespace std;
 using namespace GeographicLib;
 
 
+int nbErreur;
+
 /// MAIN
 
 
 /// Définitions des fonctions de conversion
 
-void changementRepere (double &lat, double &longitude, double alpha, double delta) //Passage des coordonnées célestes aux coordonnées géographiques
+void changementRepere (double &lat, double &longitude, double alpha, double delta, int &nbErreur) //Passage des coordonnées célestes aux coordonnées géographiques
 {
     double SinLat, CosLongXCosLat, SinLongXCosLat;
 	
-	alpha = enRadians(alpha);
-	delta = enRadians(delta);
+    alpha = enRadians(alpha);
+    //cout << "ALPHA : " << alpha << endl;
+    delta = enRadians(delta);
+    //cout << "DELTA : " << delta << endl;
 	
 	//Formules de changement de repère 
-	SinLat = cos(enRadians(EPSILON))*sin(delta)-sin(EPSILON)*sin(alpha)*cos(delta);
+    SinLat = cos(enRadians(EPSILON))*sin(delta)-sin(enRadians(EPSILON))*sin(alpha)*cos(delta);
+    //cout << "SINLAT : " << SinLat << endl; //PB
     CosLongXCosLat = cos(alpha)*cos(delta);
-	SinLongXCosLat = sin(EPSILON)*sin(delta)+cos(EPSILON)*sin(alpha)*cos(delta);
+    //cout << "COSLONGXCOSLAT : " << CosLongXCosLat << endl;
+    SinLongXCosLat = sin(enRadians(EPSILON))*sin(delta)+cos(enRadians(EPSILON))*sin(alpha)*cos(delta);
+    //cout << "SINLONGXCOSLAT : " << SinLongXCosLat << endl;
 	
 	//Calcul de lat et long
 	lat = asin(SinLat); //Parce que lat est compris entre -PI/2 et PI/2
-	
+    //cout << "LAT : " << lat << endl;
+
+    lat = enDegres(lat);
+    if ((lat>90) | (lat < (-90)))
+    {
+        nbErreur ++;
+        cout << "ERREUR LATITUDE : " << lat << endl;
+    }
+
 	if(CosLongXCosLat > 0) //Equivalent à cosLong > 0 
 	{
 		longitude = asin(SinLongXCosLat/cos(lat));
+        //cout << "LONGITUDE : " << longitude << endl;
 	}
 	
 	if(CosLongXCosLat <= 0 && SinLongXCosLat > 0)
 	{
 		longitude = acos(CosLongXCosLat/cos(lat));
+        //cout << "LONGITUDE : " << longitude << endl;
 	}
 	
 	if(CosLongXCosLat <= 0 && SinLongXCosLat <= 0)
 	{
 		longitude = PI - asin(-SinLongXCosLat/cos(lat));
+        //cout << "LONGITUDE : " << longitude << endl;
 	}
+
+    longitude = enDegres(longitude);
+    if ((longitude > 180) | (longitude < (-180)))
+    {
+        nbErreur ++;
+        cout << "ERREUR LONGITUDE : " << longitude << endl;
+    }
 }
 
 double enRadians (double angle)
 {
 	return (angle*PI)/180;
+}
+
+double enDegres (double angle){
+    return (angle*180)/PI;
 }
 
 positionPlan forward(positionTerrestre in, double meridian){
@@ -78,10 +107,10 @@ positionPlan forward(positionTerrestre in, double meridian){
         //double lon0 = -75; // Central meridian for UTM zone 18
         {
             // Sample forward calculation
-            cout << "Forward : ";
+            //cout << "Forward : ";
             double x, y;
             proj.Forward(meridian, in.latitude, in.longitude, x, y);
-            cout << x << " " << y << "\n";
+            //cout << x << " " << y << "\n";
 
             out.x = x;
             out.y = y;
@@ -157,6 +186,13 @@ int main(){
     return -1;
     }
 
+    ofstream debug("../Rendu/CatalogueDebug.txt");
+    if(!debug)
+    {
+        std::cerr<<"Cannot open the output file."<<std::endl;
+    return -1;
+    }
+
     ofstream sortie("../Rendu/CatalogueProjete.txt");
     if(!sortie)
     {
@@ -168,6 +204,8 @@ int main(){
     positionCelestre ciel;
     positionPlan plan;
 
+    nbErreur = 0;
+    int lines = 0;
     int compteur = 0;
     string mot;
 
@@ -188,21 +226,32 @@ int main(){
          }
          if (compteur %3 == 0)
          {
-            // On récupère la valeur
+            lines ++;
+
+             // On récupère la valeur
             ciel.declination = atoi(mot.c_str());
 
             // On passe au repère terrestre
-            changementRepere(sol.latitude, sol.longitude, ciel.rightascension, ciel.declination);
-            cout << "Terre : " << sol.latitude << " " << sol.longitude << endl;
+            changementRepere(sol.latitude, sol.longitude, ciel.rightascension, ciel.declination, nbErreur);
+            //cout << "Terre : " << sol.latitude << " " << sol.longitude << endl;
 
             // On calcule le meridien de projection
             int Zone = long2UTM(sol.longitude);
             double _meridian = meridian(Zone);
-            cout << "Zone : " << Zone << " Longitude : " << _meridian << endl;
+            //cout << "Zone : " << Zone << " Longitude : " << _meridian << endl;
 
             // On projete sur le sol
             plan = forward(sol, _meridian);
-            cout << endl;
+            //cout << endl;
+
+
+            // On écrit dans le fichier texte
+            stringstream debugX, debugY;
+            debugX << sol.latitude;
+            string dX = debugX.str();
+            debugY << sol.longitude;
+            string dY = debugY.str();
+            debug << dX << " " << dY << '\n';
 
 
             // On écrit dans le fichier texte
@@ -216,6 +265,10 @@ int main(){
         }
     }
     //}
+    cout << "DONE " << endl;
+    cout << "Nombre d'erreurs : " << nbErreur << endl;
+    float ratio = 100.0 * (float) nbErreur / ((float) lines);
+    cout << "Ratio d'erreur : " << ratio << endl;
     sortie.close();
 
     return 0;
