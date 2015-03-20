@@ -17,7 +17,11 @@
 #include <string>
 #include <sstream>
 #include <cmath>
+#include <vector>
 #include "GeographicLib/TransverseMercator.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include <opencv2/core/core.hpp>
 
 #include "main_conversion.h"
 
@@ -25,6 +29,7 @@
 #define EPSILON 23.439281
 
 using namespace std;
+using namespace cv;
 using namespace GeographicLib;
 
 
@@ -177,6 +182,9 @@ double meridian(int zone){
 // Unités de la conversion changement de repère ?
 // Unités de Forward ?
 
+// Affichage du plan: si affichage = 1 : ON
+#define AFFICHAGE 1
+
 int main(){
 
     ifstream catalogue("../src/cat.txt");
@@ -203,6 +211,12 @@ int main(){
     positionTerrestre sol;
     positionCelestre ciel;
     positionPlan plan;
+
+
+    int height = 720;
+    int width = 1280;
+    Mat image = Mat::zeros( height, width, CV_8UC3 );
+    vector<Point> liste;
 
     nbErreur = 0;
     int lines = 0;
@@ -262,20 +276,74 @@ int main(){
             string sY = ssY.str();
             sortie << sX << " " << sY << '\n';
 
+            if (AFFICHAGE == 1)
+            {
+                if ((!isnan(plan.x))&&(!isnan(plan.y)))
+                {
+                    int X = (plan.x)/1000; cout << " X " << X;
+                    int Y = (plan.y)/10000; cout << " Y " << Y << endl;
+                    Point tmp(X,Y);
+                    liste.push_back(tmp);
+                }
+            }
         }
     }
     //}
     cout << "DONE " << endl;
+    cout << "Liste " << liste.size() << endl;
     cout << "Nombre d'erreurs : " << nbErreur << endl;
     float ratio = 100.0 * (float) nbErreur / ((float) lines);
     cout << "Ratio d'erreur : " << ratio << endl;
+
+
+
+    if (AFFICHAGE == 1){
+        //affichage(&image, liste);
+        cout << "je vais lancer l'affichage " << endl;
+
+        for (int i = 0; i < 10 ; i++){
+            circle(image, liste[i], 1, Scalar(0,0,255), 1, 8, 0 );
+            cout << i << endl;
+        }
+        cout << "Fin boucle " << endl;
+
+        int key =  waitKey(0);
+        if (key != -1)
+            cout << waitKey<< endl;
+
+        cout << "After WK" << endl;
+
+        namedWindow("Debug_Plan");
+        imshow("Debug_Plan", image);
+
+        cout << "After imshow" << endl;
+    }
+
     sortie.close();
 
     return 0;
 }
+/*
+void affichage(Mat *image, vector<Point> liste){
 
+    cout << "je vais lancer l'affichage " << endl;
 
+    for (int i = 0; i < 10 ; i++){
+        circle(image, liste[i], 1, Scalar(0,0,255), 1, 8, 0 );
+        cout << i << endl;
+    }
+    cout << "Fin boucle " << endl;
 
+    int waitKey(30);
+
+    cout << "After WK" << endl;
+
+    namedWindow("Debug_Plan");
+    imshow("Debug_Plan", image);
+
+    cout << "After imshow" << endl;
+}
+*/
 
 
 

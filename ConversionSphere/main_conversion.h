@@ -37,3 +37,5 @@ positionTerrestre reverse(positionPlan in, double meridian);
 positionPlan forward(positionTerrestre in);
 
 double meridian(int zone);
+
+//void affichage(Mat *image, vector<Point> liste);
